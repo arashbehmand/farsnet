@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-""" generated source for module SynsetService """
-# 
-#  * Decompiled with CFR 0.145.
-#  
-# package: farsnet.service
 import farsnet.database.SqlLiteDbUtility
 
 import farsnet.schema.Synset
@@ -18,26 +12,14 @@ import farsnet.schema.SynsetRelationType
 
 import farsnet.schema.WordNetSynset
 
-import java.sql.Connection
-
-import java.sql.PreparedStatement
-
-import java.sql.ResultSet
-
-import java.sql.SQLException
-
-import java.util.ArrayList
-
-import java.util.List
-
 class SynsetService(object):
-    """ generated source for class SynsetService """
     @classmethod
     def getSynsetsByWord(cls, searchStyle, searchKeyword):
-        """ generated source for method getSynsetsByWord """
         results = ArrayList()
         sql = "SELECT id, pos, semanticCategory, example, gloss, nofather, noMapping FROM synset WHERE synset.id IN (SELECT synset.id as synset_id FROM word INNER JOIN sense ON sense.word = word.id INNER JOIN synset ON sense.synset = synset.id LEFT OUTER JOIN value ON value.word = word.id WHERE word.search_value @SearchStyle '@SearchValue' OR (value.search_value) @SearchStyle '@SearchValue')  OR synset.id IN (SELECT sense.synset AS synset_id FROM sense INNER JOIN sense_relation ON sense.id = sense_relation.sense INNER JOIN sense AS sense_2 ON sense_2.id = sense_relation.sense2 INNER JOIN word ON sense_2.word = word.id WHERE sense_relation.type =  'Refer-to' AND word.search_value LIKE  '@SearchValue') OR synset.id IN (SELECT sense_2.synset AS synset_id FROM sense INNER JOIN sense_relation ON sense.id = sense_relation.sense INNER JOIN sense AS sense_2 ON sense_2.id = sense_relation.sense2 INNER JOIN word ON sense.word = word.id WHERE sense_relation.type =  'Refer-to' AND word.search_value LIKE  '@SearchValue')"
-        searchKeyword = SynsetService.SecureValue(SynsetService.NormalValue(searchKeyword))
+        searchKeyword = SynsetService.SecureValue(
+            SynsetService.NormalValue(searchKeyword)
+        )
         if searchStyle == "LIKE" or searchStyle == "START" or searchStyle == "END":
             sql = sql.replace("@SearchStyle", "LIKE")
             if searchStyle == "LIKE":
@@ -51,53 +33,87 @@ class SynsetService(object):
         sql = sql.replace("@SearchValue", searchKeyword)
         try:
             while rs.next():
-                results.add(Synset(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7)))
+                results.add(
+                    Synset(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                    )
+                )
         except SQLException as e:
             e.printStackTrace()
         return results
 
     @classmethod
     def getAllSynsets(cls):
-        """ generated source for method getAllSynsets """
         results = ArrayList()
         sql = "SELECT id, pos, semanticCategory, example, gloss, nofather, noMapping FROM synset "
         try:
             while rs.next():
-                results.add(Synset(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7)))
+                results.add(
+                    Synset(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                    )
+                )
         except SQLException as e:
             e.printStackTrace()
         return results
 
     @classmethod
     def getSynsetById(cls, synsetId):
-        """ generated source for method getSynsetById """
         result = None
         try:
             while rs.next():
-                result = Synset(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7))
+                result = Synset(
+                    rs.getInt(1),
+                    rs.getString(2),
+                    rs.getString(3),
+                    rs.getString(4),
+                    rs.getString(5),
+                    rs.getString(6),
+                    rs.getString(7),
+                )
         except SQLException as e:
             e.printStackTrace()
         return result
 
     @classmethod
     def getSynsetRelationsById(cls, synsetId):
-        """ generated source for method getSynsetRelationsById """
         results = ArrayList()
-        sql = "SELECT id, type, synsetWords1, synsetWords2, synset, synset2, reverse_type FROM synset_relation WHERE synset=" + synsetId + " OR synset2=" + synsetId
+        sql = (
+            "SELECT id, type, synsetWords1, synsetWords2, synset, synset2, reverse_type FROM synset_relation WHERE synset="
+            + synsetId
+            + " OR synset2="
+            + synsetId
+        )
         try:
             while rs.next():
-                results.add(SynsetRelation(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getString(7)))
+                results.add(
+                    SynsetRelation(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getInt(5),
+                        rs.getInt(6),
+                        rs.getString(7),
+                    )
+                )
         except SQLException as e:
             e.printStackTrace()
         resultsArr = ArrayList()
-        # 
-        #  * Decompiled with CFR 0.145.
-        #  
         i = 0
         while i < len(results):
-            # 
-            #  * Decompiled with CFR 0.145.
-            #  
             if temp.getSynsetId1() != synsetId:
                 temp.setReverseType(type_)
                 temp.setSynsetId1(synsetId2)
@@ -111,30 +127,51 @@ class SynsetService(object):
 
     @classmethod
     def getSynsetRelationsByType(cls, synsetId, types):
-        """ generated source for method getSynsetRelationsByType """
         results = ArrayList()
         _types = ""
         _revTypes = ""
         for type_ in types:
-            _types = String.valueOf(_types) + "'" + SynsetService.RelationValue(type_) + "',"
-            _revTypes = String.valueOf(_revTypes) + "'" + SynsetService.RelationValue(SynsetService.ReverseRelationType(type_)) + "',"
+            _types = (
+                String.valueOf(_types) + "'" + SynsetService.RelationValue(type_) + "',"
+            )
+            _revTypes = (
+                String.valueOf(_revTypes)
+                + "'"
+                + SynsetService.RelationValue(SynsetService.ReverseRelationType(type_))
+                + "',"
+            )
         _types = String.valueOf(_types) + "'not_type'"
         _revTypes = String.valueOf(_revTypes) + "'not_type'"
-        sql = "SELECT id, type, synsetWords1, synsetWords2, synset, synset2, reverse_type FROM synset_relation WHERE (synset = " + synsetId + " AND type in (" + _types + ")) OR (synset2 = " + synsetId + " AND type in (" + _revTypes + "))" + " ORDER BY synset"
+        sql = (
+            "SELECT id, type, synsetWords1, synsetWords2, synset, synset2, reverse_type FROM synset_relation WHERE (synset = "
+            + synsetId
+            + " AND type in ("
+            + _types
+            + ")) OR (synset2 = "
+            + synsetId
+            + " AND type in ("
+            + _revTypes
+            + "))"
+            + " ORDER BY synset"
+        )
         try:
             while rs.next():
-                results.add(SynsetRelation(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getInt(6), rs.getString(7)))
+                results.add(
+                    SynsetRelation(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getInt(5),
+                        rs.getInt(6),
+                        rs.getString(7),
+                    )
+                )
         except SQLException as e:
             e.printStackTrace()
         resultsArr = ArrayList()
-        # 
-        #  * Decompiled with CFR 0.145.
-        #  
         i = 0
         while i < len(results):
-            # 
-            #  * Decompiled with CFR 0.145.
-            #  
             if temp.getSynsetId1() != synsetId:
                 temp.setReverseType(type_)
                 temp.setSynsetId1(synsetId2)
@@ -148,33 +185,51 @@ class SynsetService(object):
 
     @classmethod
     def getWordNetSynsets(cls, synsetId):
-        """ generated source for method getWordNetSynsets """
         results = ArrayList()
-        sql = "SELECT id, wnPos, wnOffset, example, gloss, synset, type FROM wordnetsynset WHERE synset=" + synsetId
+        sql = (
+            "SELECT id, wnPos, wnOffset, example, gloss, synset, type FROM wordnetsynset WHERE synset="
+            + synsetId
+        )
         try:
             while rs.next():
-                results.add(WordNetSynset(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(6), rs.getString(7)))
+                results.add(
+                    WordNetSynset(
+                        rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getInt(6),
+                        rs.getString(7),
+                    )
+                )
         except SQLException as e:
             e.printStackTrace()
         return results
 
     @classmethod
     def getSynsetExamples(cls, synsetId):
-        """ generated source for method getSynsetExamples """
         results = ArrayList()
-        sql = "SELECT gloss_and_example.id, content, lexicon.title FROM gloss_and_example INNER JOIN lexicon ON gloss_and_example.lexicon=lexicon.id WHERE type='EXAMPLE' and synset=" + synsetId
+        sql = (
+            "SELECT gloss_and_example.id, content, lexicon.title FROM gloss_and_example INNER JOIN lexicon ON gloss_and_example.lexicon=lexicon.id WHERE type='EXAMPLE' and synset="
+            + synsetId
+        )
         try:
             while rs.next():
-                results.add(SynsetExample(rs.getInt(1), rs.getString(2), rs.getString(3)))
+                results.add(
+                    SynsetExample(rs.getInt(1), rs.getString(2), rs.getString(3))
+                )
         except SQLException as e:
             e.printStackTrace()
         return results
 
     @classmethod
     def getSynsetGlosses(cls, synsetId):
-        """ generated source for method getSynsetGlosses """
         results = ArrayList()
-        sql = "SELECT gloss_and_example.id, content, lexicon.title FROM gloss_and_example INNER JOIN lexicon ON gloss_and_example.lexicon=lexicon.id WHERE type='GLOSS' and synset=" + synsetId
+        sql = (
+            "SELECT gloss_and_example.id, content, lexicon.title FROM gloss_and_example INNER JOIN lexicon ON gloss_and_example.lexicon=lexicon.id WHERE type='GLOSS' and synset="
+            + synsetId
+        )
         try:
             while rs.next():
                 results.add(SynsetGloss(rs.getInt(1), rs.getString(2), rs.getString(3)))
@@ -184,13 +239,12 @@ class SynsetService(object):
 
     @classmethod
     def NormalValue(cls, Value):
-        """ generated source for method NormalValue """
         NormalValue = Value
         NormalValue = NormalValue.replace("\u06cc", "\u064a")
         NormalValue = NormalValue.replace("\u0649", "\u064a")
         NormalValue = NormalValue.replace("\u0643", "\u06a9")
         NormalValue = NormalValue.replace("'", "")
-        NormalValue = NormalValue.replace("\"", "")
+        NormalValue = NormalValue.replace('"', "")
         NormalValue = NormalValue.replace(" ", "")
         NormalValue = NormalValue.replace("\u200c", "")
         NormalValue = NormalValue.replace("\u200c\u200c\u0621", "")
@@ -224,12 +278,11 @@ class SynsetService(object):
 
     @classmethod
     def SecureValue(cls, Value):
-        """ generated source for method SecureValue """
         if Value == None:
             return ""
         Value = Value.replace("\u0000", "")
         Value = Value.replace("'", "")
-        Value = Value.replace("\"", "")
+        Value = Value.replace('"', "")
         Value = Value.replace("\b", "")
         Value = Value.replace("\n", "")
         Value = Value.replace("\r", "")
@@ -256,8 +309,11 @@ class SynsetService(object):
 
     @classmethod
     def RelationValue(cls, type_):
-        """ generated source for method RelationValue """
-        if type_.__str__() == "Related_to" or type_.__str__() == "Has-Unit" or type_.__str__().substring(3) == "Is_":
+        if (
+            type_.__str__() == "Related_to"
+            or type_.__str__() == "Has-Unit"
+            or type_.__str__().substring(3) == "Is_"
+        ):
             return type_.__str__().replace("_", "-")
         if type_.__str__() == "Has_Salient_defining_feature":
             return "Has-Salient defining feature"
@@ -265,7 +321,6 @@ class SynsetService(object):
 
     @classmethod
     def ReverseRelationType(cls, type_):
-        """ generated source for method ReverseRelationType """
         if SynsetRelationType.Agent == type_:
             return SynsetRelationType.Is_Agent_of
         if SynsetRelationType.Is_Agent_of == type_:
@@ -331,4 +386,3 @@ class SynsetService(object):
         if SynsetRelationType.Patient == type_:
             return SynsetRelationType.Is_Patient_of
         return type_
-

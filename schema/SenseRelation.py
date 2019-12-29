@@ -1,15 +1,11 @@
-#!/usr/bin/env python
-""" generated source for module SenseRelation """
-# 
-#  * Decompiled with CFR 0.145.
-#  
-# package: farsnet.schema
-import farsnet.schema.Sense
+import Sense
 
-import farsnet.service.SenseService
+import ..service.SenseService
+
 
 class SenseRelation(object):
     """ generated source for class SenseRelation """
+
     id = int()
     senseId1 = int()
     senseId2 = int()
@@ -86,4 +82,3 @@ class SenseRelation(object):
     def setType(self, type_):
         """ generated source for method setType """
         self.type_ = type_
-
