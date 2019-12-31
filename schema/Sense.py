@@ -1,32 +1,7 @@
-class Sense(object):
-    """ generated source for class Sense """
+import farsnet
+import farsnet.schema
 
-    id = int()
-    seqId = str()
-    value = str()
-    word = Word()
-    verbTransitivity = str()
-    verbActivePassive = str()
-    verbType = str()
-    synset = str()
-    verbPastStem = str()
-    verbPresentStem = str()
-    nounCategory = str()
-    nounPluralType = str()
-    pronoun = str()
-    nounNumeralType = str()
-    adverbType1 = str()
-    adverbType2 = str()
-    preNounAdjectiveType = str()
-    adjectiveType2 = str()
-    nounSpecifityType = str()
-    nounType = str()
-    adjectiveType1 = str()
-    isCausative = bool()
-    isIdiomatic = bool()
-    transitiveType = str()
-    isAbbreviation = bool()
-    isColloquial = bool()
+class Sense(object):
 
     def __init__(self,
         id,
@@ -84,97 +59,17 @@ class Sense(object):
         self.id = id
         self.seqId = seqId
         self.value = defaultValue
-        self.word = Word(wordId, pos, defaultPhonetic, defaultValue)
+        self.word = farsnet.schema.Word(wordId, pos, defaultPhonetic, defaultValue)
 
-    def getId(self):
-        return self.id
-
-    def getSeqId(self):
-        return self.seqId
-
-    def getValue(self):
-        return self.value
-
-    def getVerbActivePassive(self):
-        return self.verbActivePassive
-
-    def getVerbTransitivity(self):
-        return self.verbTransitivity
-
-    def getVerbType(self):
-        return self.verbType
-
-    def getVerbPresentStem(self):
-        return self.verbPresentStem
-
-    def getVerbPastStem(self):
-        return self.verbPastStem
-
-    def getNounCategory(self):
-        return self.nounCategory
-
-    def getNounPluralType(self):
-        return self.nounPluralType
-
-    def getPronoun(self):
-        return self.pronoun
-
-    def getNounNumeralType(self):
-        return self.nounNumeralType
-
-    def getAdverbType1(self):
-        return self.adverbType1
-
-    def getAdverbType2(self):
-        return self.adverbType2
-
-    def getPreNounAdjectiveType(self):
-        return self.preNounAdjectiveType
-
-    def getAdjectiveType2(self):
-        return self.adjectiveType2
-
-    def getNounSpecifityType(self):
-        return self.nounSpecifityType
-
-    def getNounType(self):
-        return self.nounType
-
-    def getAdjectiveType1(self):
-        return self.adjectiveType1
-
-    def getIsCausative(self):
-        return self.isCausative
-
-    def getIsIdiomatic(self):
-        return self.isIdiomatic
-
-    def getTransitiveType(self):
-        return self.transitiveType
-
-    def getIsAbbreviation(self):
-        return self.isAbbreviation
-
-    def getIsColloquial(self):
-        return self.isColloquial
-
-    def getWord(self):
-        return self.word
-
+    
     def getSynset(self):
         if self.synset != None and not self.synset == "":
-            return SynsetService.getSynsetById(Integer.parseInt(self.synset))
+            return farsnet.synset_service.getSynsetById(int(self.synset))
         return None
 
-    @overloaded
-    def getSenseRelations(self):
-        return SenseService.getSenseRelationsById(self.id)
-
-    @getSenseRelations.register(object, SenseRelationType)
-    def getSenseRelations_0(self, relationType):
-        # types = [None]*
-        return SenseService.getSenseRelationsByType(self.id, types)
-
-    @getSenseRelations.register(object, SenseRelationType)
-    def getSenseRelations_1(self, relationTypes):
-        return SenseService.getSenseRelationsByType(self.id, relationTypes)
+    def getSenseRelations(self, relationType = None):
+        if relationType is None:
+            return farsnet.sense_service.getSenseRelationsById(self.id)
+        else:
+            return farsnet.sense_service.getSenseRelationsByType(self.id, relationType)
+        

@@ -1,3 +1,4 @@
+import farsnet
 class Synset(object):
     id = int()
     pos = str()
@@ -5,7 +6,7 @@ class Synset(object):
     nofather = str()
     noMapping = str()
 
-    @overloaded
+    
     def __init__(self, id, pos, semanticCategory, example, gloss, nofather, noMapping
     ):
         self.id = id
@@ -14,42 +15,21 @@ class Synset(object):
         self.noMapping = noMapping
         self.pos = pos
 
-    def getId(self):
-        return self.id
-
-    def getSemanticCategory(self):
-        return self.semanticCategory
-
-    def getNoMapping(self):
-        return self.noMapping
-
-    def getNofather(self):
-        return self.nofather
-
-    def getPos(self):
-        return self.pos
-
     def getExamples(self):
-        return SynsetService.getSynsetExamples(self.id)
+        return farsnet.synset_service.getSynsetExamples(self.id)
 
     def getGlosses(self):
-        return SynsetService.getSynsetGlosses(self.id)
+        return farsnet.synset_service.getSynsetGlosses(self.id)
 
     def getSenses(self):
-        return SenseService.getSensesBySynset(self.id)
+        return farsnet.sense_service.getSensesBySynset(self.id)
 
     def getWordNetSynsets(self):
-        return SynsetService.getWordNetSynsets(self.id)
+        return farsnet.synset_service.getWordNetSynsets(self.id)
 
-    @overloaded
-    def getSynsetRelations(self):
-        return SynsetService.getSynsetRelationsById(self.id)
-
-    @getSynsetRelations.register(object, SynsetRelationType)
-    def getSynsetRelations_0(self, relationType):
-        # types = [None]*
-        return SynsetService.getSynsetRelationsByType(self.id, types)
-
-    @getSynsetRelations.register(object, SynsetRelationType)
-    def getSynsetRelations_1(self, relationTypes):
-        return SynsetService.getSynsetRelationsByType(self.id, relationTypes)
+    
+    def getSynsetRelations(self, relationType = None):
+        if relationType is None:
+            return farsnet.synset_service.getSynsetRelationsById(self.id)
+        else:
+            return farsnet.synset_service.getSynsetRelationsByType(self.id, relationType)
