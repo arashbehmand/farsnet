@@ -1,15 +1,15 @@
 import farsnet
 class SenseRelation(object):
-    def __init__(self, id, senseId1, senseId2, senseWord1, senseWord2, type_):
+    def __init__(self, id, sense_id1, sense_id2, sense_word1, sense_word2, type_):
         self.id = id
-        self.senseId1 = senseId1
-        self.senseId2 = senseId2
-        self.senseWord1 = senseWord1
-        self.senseWord2 = senseWord2
+        self.sense_id1 = sense_id1
+        self.sense_id2 = sense_id2
+        self.sense_word1 = sense_word1
+        self.sense_word2 = sense_word2
         self.type_ = type_
 
-    def getSense1(self):
-        return farsnet.sense_service.getSenseById(self.senseId1)
+    def sense1(self):
+        return farsnet.sense_service.get_sense_by_id(self.sense_id1)
 
-    def getSense2(self):
-        return farsnet.sense_service.getSenseById(self.senseId2)
+    def sense2(self):
+        return farsnet.sense_service.get_sense_by_id(self.sense_id2)

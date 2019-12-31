@@ -1,35 +1,28 @@
 import farsnet
 class Synset(object):
-    id = int()
-    pos = str()
-    semanticCategory = str()
-    nofather = str()
-    noMapping = str()
-
-    
-    def __init__(self, id, pos, semanticCategory, example, gloss, nofather, noMapping
+    def __init__(self, id, pos, semantic_category, example, gloss, nofather, no_mapping
     ):
         self.id = id
-        self.semanticCategory = semanticCategory
+        self.semantic_category = semantic_category
         self.nofather = nofather
-        self.noMapping = noMapping
+        self.no_mapping = no_mapping
         self.pos = pos
 
-    def getExamples(self):
-        return farsnet.synset_service.getSynsetExamples(self.id)
+    def examples(self):
+        return farsnet.synset_service.get_synset_examples(self.id)
 
-    def getGlosses(self):
-        return farsnet.synset_service.getSynsetGlosses(self.id)
+    def glosses(self):
+        return farsnet.synset_service.get_synset_glosses(self.id)
 
-    def getSenses(self):
-        return farsnet.sense_service.getSensesBySynset(self.id)
+    def senses(self):
+        return farsnet.sense_service.get_senses_by_synset(self.id)
 
-    def getWordNetSynsets(self):
-        return farsnet.synset_service.getWordNetSynsets(self.id)
+    def wordnet_synsets(self):
+        return farsnet.synset_service.get_wordnet_synsets(self.id)
 
     
-    def getSynsetRelations(self, relationType = None):
-        if relationType is None:
-            return farsnet.synset_service.getSynsetRelationsById(self.id)
+    def synset_relations(self, relation_type = None):
+        if relation_type is None:
+            return farsnet.synset_service.get_synset_relations_by_id(self.id)
         else:
-            return farsnet.synset_service.getSynsetRelationsByType(self.id, relationType)
+            return farsnet.synset_service.get_synset_relations_by_type(self.id, relation_type)

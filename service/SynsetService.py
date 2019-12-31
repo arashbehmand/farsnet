@@ -7,21 +7,21 @@ class SynsetService(object):
         def __init__(self, con):
             self.con = con
 
-        def getSynsetsByWord(self, searchStyle, searchKeyword):
+        def get_synsets_by_word(self, search_style, search_keyword):
             results = list()
             sql = "SELECT id, pos, semanticCategory, example, gloss, nofather, noMapping FROM synset WHERE synset.id IN (SELECT synset.id as synset_id FROM word INNER JOIN sense ON sense.word = word.id INNER JOIN synset ON sense.synset = synset.id LEFT OUTER JOIN value ON value.word = word.id WHERE word.search_value @SearchStyle '@SearchValue' OR (value.search_value) @SearchStyle '@SearchValue')  OR synset.id IN (SELECT sense.synset AS synset_id FROM sense INNER JOIN sense_relation ON sense.id = sense_relation.sense INNER JOIN sense AS sense_2 ON sense_2.id = sense_relation.sense2 INNER JOIN word ON sense_2.word = word.id WHERE sense_relation.type =  'Refer-to' AND word.search_value LIKE  '@SearchValue') OR synset.id IN (SELECT sense_2.synset AS synset_id FROM sense INNER JOIN sense_relation ON sense.id = sense_relation.sense INNER JOIN sense AS sense_2 ON sense_2.id = sense_relation.sense2 INNER JOIN word ON sense.word = word.id WHERE sense_relation.type =  'Refer-to' AND word.search_value LIKE  '@SearchValue')"
-            searchKeyword = self.SecureValue(self.NormalValue(searchKeyword))
-            if searchStyle == "LIKE" or searchStyle == "START" or searchStyle == "END":
+            search_keyword = self.secure_value(self.normal_value(search_keyword))
+            if search_style == "LIKE" or search_style == "START" or search_style == "END":
                 sql = sql.replace("@SearchStyle", "LIKE")
-                if searchStyle == "LIKE":
-                    searchKeyword = "%" + searchKeyword + "%"
-                if searchStyle == "START":
-                    searchKeyword = searchKeyword + "%"
-                if searchStyle == "END":
-                    searchKeyword = "%" + searchKeyword
-            if searchStyle == "EXACT":
+                if search_style == "LIKE":
+                    search_keyword = "%" + search_keyword + "%"
+                if search_style == "START":
+                    search_keyword = search_keyword + "%"
+                if search_style == "END":
+                    search_keyword = "%" + search_keyword
+            if search_style == "EXACT":
                 sql = sql.replace("@SearchStyle", "=")
-            sql = sql.replace("@SearchValue", searchKeyword)
+            sql = sql.replace("@SearchValue", search_keyword)
             cur = self.con.cursor()
             cur.execute(sql)
             for row in cur:
@@ -32,7 +32,7 @@ class SynsetService(object):
                 )
             return results
 
-        def getAllSynsets(self):
+        def get_all_synsets(self):
             results = list()
             sql = "SELECT id, pos, semanticCategory, example, gloss, nofather, noMapping FROM synset "
             cur = self.con.cursor()
@@ -45,8 +45,8 @@ class SynsetService(object):
                 )
             return results
 
-        def getSynsetById(self, synsetId):
-            sql = "SELECT id, pos, semanticCategory, example, gloss, nofather, noMapping FROM synset WHERE id=" + str(synsetId);
+        def get_synset_by_id(self, synset_id):
+            sql = "SELECT id, pos, semanticCategory, example, gloss, nofather, noMapping FROM synset WHERE id=" + str(synset_id);
             result = None
             cur = self.con.cursor()
             cur.execute(sql)
@@ -56,13 +56,13 @@ class SynsetService(object):
                 )
             return result
 
-        def getSynsetRelationsById(self, synsetId):
+        def get_synset_relations_by_id(self, synset_id):
             results = list()
             sql = (
                 "SELECT id, type, synsetWords1, synsetWords2, synset, synset2, reverse_type FROM synset_relation WHERE synset="
-                + str(synsetId)
+                + str(synset_id)
                 + " OR synset2="
-                + str(synsetId)
+                + str(synset_id)
             )
             cur = self.con.cursor()
             cur.execute(sql)
@@ -73,45 +73,45 @@ class SynsetService(object):
                     )
                 )
 
-            resultsArr = list()
+            reslut_arr = list()
             for res in results:
-                if res.synsetId1 != synsetId:
+                if res.synset_id1 != synset_id:
                     type_ = res.type_
-                    reverseType = res.reverseType
-                    synsetId2 = res.synsetId2
-                    synsetId1 = res.synsetId1
-                    synsetWords2 = res.synsetWords1
-                    synsetWords1 = res.synsetWords2
-                    res.reverseType = type_
-                    res.type_ = reverseType
-                    res.synsetId1 = synsetId2
-                    res.synsetId2 = synsetId1
-                    res.synsetWord1 = synsetWords2
-                    res.synsetWord2 = synsetWords1
-                resultsArr.append(res)
-            return resultsArr
+                    reverse_type = res.reverse_type
+                    synset_id2 = res.synset_id2
+                    synset_id1 = res.synset_id1
+                    synset_words2 = res.synset_words1
+                    synset_words1 = res.synset_words2
+                    res.reverse_type = type_
+                    res.type_ = reverse_type
+                    res.synset_id1 = synset_id2
+                    res.synset_id2 = synset_id1
+                    res.synsetWord1 = synset_words2
+                    res.synsetWord2 = synset_words1
+                reslut_arr.append(res)
+            return reslut_arr
 
-        def getSynsetRelationsByType(self, synsetId, types):
+        def get_synset_relations_by_type(self, synset_id, types):
             results = list()
             _types = ""
             _revTypes = ""
             for type_ in types:
-                _types = str(_types) + "'" + self.RelationValue(type_) + "',"
+                _types = str(_types) + "'" + self.relation_value(type_) + "',"
                 _revTypes = (
                     str(_revTypes)
                     + "'"
-                    + self.RelationValue(self.ReverseRelationType(type_))
+                    + self.relation_value(self.reverse_relation_type(type_))
                     + "',"
                 )
             _types = str(_types) + "'not_type'"
             _revTypes = str(_revTypes) + "'not_type'"
             sql = (
                 "SELECT id, type, synsetWords1, synsetWords2, synset, synset2, reverse_type FROM synset_relation WHERE (synset = "
-                + str(synsetId)
+                + str(synset_id)
                 + " AND type in ("
                 + _types
                 + ")) OR (synset2 = "
-                + str(synsetId)
+                + str(synset_id)
                 + " AND type in ("
                 + _revTypes
                 + "))"
@@ -126,29 +126,29 @@ class SynsetService(object):
                     )
                 )
 
-            resultsArr = list()
+            reslut_arr = list()
             for res in results:
-                if res.synsetId1 != synsetId:
+                if res.synset_id1 != synset_id:
                     type_ = res.type_
-                    reverseType = res.reverseType
-                    synsetId2 = res.synsetId2
-                    synsetId1 = res.synsetId1
-                    synsetWords2 = res.synsetWords1
-                    synsetWords1 = res.synsetWords2
-                    res.reverseType = type_
-                    res.type_ = reverseType
-                    res.synsetId1 = synsetId2
-                    res.synsetId2 = synsetId1
-                    res.synsetWord1 = synsetWords2
-                    res.synsetWord2 = synsetWords1
-                resultsArr.append(res)
-            return resultsArr
+                    reverse_type = res.reverse_type
+                    synset_id2 = res.synset_id2
+                    synset_id1 = res.synset_id1
+                    synset_words2 = res.synset_words1
+                    synset_words1 = res.synset_words2
+                    res.reverse_type = type_
+                    res.type_ = reverse_type
+                    res.synset_id1 = synset_id2
+                    res.synset_id2 = synset_id1
+                    res.synsetWord1 = synset_words2
+                    res.synsetWord2 = synset_words1
+                reslut_arr.append(res)
+            return reslut_arr
 
-        def getWordNetSynsets(self, synsetId):
+        def get_wordnet_synsets(self, synset_id):
             results = list()
             sql = (
                 "SELECT id, wnPos, wnOffset, example, gloss, synset, type FROM wordnetsynset WHERE synset="
-                + str(synsetId)
+                + str(synset_id)
             )
             cur = self.con.cursor()
             cur.execute(sql)
@@ -160,11 +160,11 @@ class SynsetService(object):
                 )
             return results
 
-        def getSynsetExamples(self, synsetId):
+        def get_synset_examples(self, synset_id):
             results = list()
             sql = (
                 "SELECT gloss_and_example.id, content, lexicon.title FROM gloss_and_example INNER JOIN lexicon ON gloss_and_example.lexicon=lexicon.id WHERE type='EXAMPLE' and synset="
-                + str(synsetId)
+                + str(synset_id)
             )
             cur = self.con.cursor()
             cur.execute(sql)
@@ -172,11 +172,11 @@ class SynsetService(object):
                 results.append(farsnet.schema.SynsetExample(row[1], row[2], row[3]))
             return results
 
-        def getSynsetGlosses(self, synsetId):
+        def get_synset_glosses(self, synset_id):
             results = list()
             sql = (
                 "SELECT gloss_and_example.id, content, lexicon.title FROM gloss_and_example INNER JOIN lexicon ON gloss_and_example.lexicon=lexicon.id WHERE type='GLOSS' and synset="
-                + str(synsetId)
+                + str(synset_id)
             )
             cur = self.con.cursor()
             cur.execute(sql)
@@ -184,9 +184,9 @@ class SynsetService(object):
                 results.append(farsnet.schema.SynsetGloss(row[1], row[2], row[3]))
             return results
 
-        def NormalValue(self, Value):
-            NormalValue = (
-                Value.replace("\u06cc", "\u064a")
+        def normal_value(self, value):
+            normal_value = (
+                value.replace("\u06cc", "\u064a")
                 .replace("\u0649", "\u064a")
                 .replace("\u0643", "\u06a9")
                 .replace("'", "")
@@ -221,13 +221,13 @@ class SynsetService(object):
                 .replace("\u0623", "\u0627")
                 .replace("\u0626", "\u064a")
             )
-            return NormalValue
+            return normal_value
 
-        def SecureValue(self, Value):
-            if Value == None:
+        def secure_value(self, value):
+            if value == None:
                 return ""
-            Value = (
-                Value.replace("\u0000", "")
+            value = (
+                value.replace("\u0000", "")
                 .replace("'", "")
                 .replace('"', "")
                 .replace("\b", "")
@@ -253,9 +253,9 @@ class SynsetService(object):
                 .replace("*", "")
                 .replace("+", "")
             )
-            return Value
+            return value
 
-        def RelationValue(self, type_):
+        def relation_value(self, type_):
             if (
                 type_ == "Related_to"
                 or type_ == "Has-Unit"
@@ -266,7 +266,7 @@ class SynsetService(object):
                 return "Has-Salient defining feature"
             return type_.replace("_", " ")
 
-        def ReverseRelationType(self, type_):
+        def reverse_relation_type(self, type_):
             if type_ == farsnet.schema.SynsetRelationType.Agent:
                 return farsnet.schema.SynsetRelationType.Is_Agent_of
             if type_ == farsnet.schema.SynsetRelationType.Is_Agent_of:

@@ -6,19 +6,19 @@ import farsnet
 class SynsetRelation(object):
 
     def __init__(
-        self, id, type_, synsetWords1, synsetWords2, synsetId1, synsetId2, reverseType
+        self, id, type_, synset_words1, synset_words2, synset_id1, synset_id2, reverse_type
     ):
         self.id = id
         self.type_ = type_
-        self.synsetWords1 = synsetWords1
-        self.synsetWords2 = synsetWords2
-        self.synsetId1 = synsetId1
-        self.synsetId2 = synsetId2
-        self.reverseType = reverseType
+        self.synset_words1 = synset_words1
+        self.synset_words2 = synset_words2
+        self.synset_id1 = synset_id1
+        self.synset_id2 = synset_id2
+        self.reverse_type = reverse_type
 
     
-    def getSynset1(self):
-        return farsnet.synset_service.getSynsetById(self.synsetId1)
+    def synset1(self):
+        return farsnet.synset_service.get_synset_by_id(self.synset_id1)
 
-    def getSynset2(self):
-        return farsnet.synset_service.getSynsetById(self.synsetId2)
+    def synset2(self):
+        return farsnet.synset_service.get_synset_by_id(self.synset_id2)

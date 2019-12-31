@@ -5,14 +5,14 @@ import farsnet
 
 class Word(object):
 
-    def __init__(self, id, pos, defaultPhonetic, defaultValue):
+    def __init__(self, id, pos, default_phonetic, default_value):
         self.id = id
-        self.defaultPhonetic = defaultPhonetic
-        self.defaultValue = defaultValue
+        self.default_phonetic = default_phonetic
+        self.default_value = default_value
         self.pos = pos
 
-    def getWrittenForms(self):
-        return farsnet.sense_service.getWrittenFormsByWord(self.id)
+    def written_forms(self):
+        return farsnet.sense_service.get_written_forms_by_word(self.id)
 
-    def getPhoneticForms(self):
-        return farsnet.sense_service.getPhoneticFormsByWord(self.id)
+    def phonetic_forms(self):
+        return farsnet.sense_service.get_phonetic_forms_by_word(self.id)
