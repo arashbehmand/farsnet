@@ -1,4 +1,5 @@
-class SynsetRelationType():
+from enum import Enum
+class SynsetRelationType(Enum):
     Hypernym = u"Hypernym"
     Hyponym = u"Hyponym"
     Instance_hypernym = u"Instance_hypernym"

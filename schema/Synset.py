@@ -24,5 +24,6 @@ class Synset(object):
     def synset_relations(self, relation_type = None):
         if relation_type is None:
             return farsnet.synset_service.get_synset_relations_by_id(self.id)
-        else:
-            return farsnet.synset_service.get_synset_relations_by_type(self.id, relation_type)
+        elif type(relation_type)!=list:
+            relation_type = [relation_type]
+        return farsnet.synset_service.get_synset_relations_by_type(self.id, relation_type)

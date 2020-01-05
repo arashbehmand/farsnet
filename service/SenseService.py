@@ -1,14 +1,13 @@
 import sqlite3
 import farsnet.schema
-from ._utils import _java_string_hashcode
 class SenseService(object):
-    class __SenseService(object):
+    class _SenseService(object):
         def __init__(self, con):
             self.con = con
         def get_senses_by_word(self, search_style, search_keyword):
             results = list()
             sql = "SELECT sense.id, seqId, vtansivity, vactivity, vtype, synset, vpastStem, vpresentStem, category, goupOrMokassar, esmeZamir, adad, adverb_type_1, adverb_type_2, adj_pishin_vijegi, adj_type, noe_khas, nounType, adj_type_sademorakkab, vIssababi, vIsIdiom, vGozaraType, kootah_nevesht, mohavere, word.id as wordId, word.defaultValue, word.avaInfo, word.pos FROM sense INNER JOIN word ON sense.word = word.id WHERE sense.id IN (SELECT sense.id FROM word INNER JOIN sense ON sense.word = word.id LEFT OUTER JOIN value ON value.word = word.id WHERE word.search_value @SearchStyle '@SearchValue' OR value.search_value @SearchStyle '@SearchValue') OR sense.id IN (SELECT sense.id FROM sense INNER JOIN sense_relation ON sense.id = sense_relation.sense INNER JOIN sense AS sense_2 ON sense_2.id = sense_relation.sense2 INNER JOIN word ON sense_2.word = word.id WHERE sense_relation.type =  'Refer-to' AND word.search_value LIKE  '@SearchValue') OR sense.id IN (SELECT sense_2.id FROM sense INNER JOIN sense_relation ON sense.id = sense_relation.sense INNER JOIN sense AS sense_2 ON sense_2.id = sense_relation.sense2 INNER JOIN word ON sense.word = word.id WHERE sense_relation.type =  'Refer-to' AND word.search_value LIKE  '@SearchValue') "
-            search_keyword = self.secure_value(
+            search_keyword = self._secure_value(
                 self.normal_value(search_keyword)
             )
             if search_style == "LIKE" or search_style == "START" or search_style == "END":
@@ -36,9 +35,9 @@ class SenseService(object):
                         self._get_verb_tansivity(row["vtansivity"]),
                         self._get_verb_activity(row["vactivity"]),
                         self._get_verb_type(row["vtype"]),
-                        self.get_normal_value(row["synset"]),
-                        self.get_normal_value(row["vpastStem"]),
-                        self.get_normal_value(row["vpresentStem"]),
+                        self._get_normal_value(row["synset"]),
+                        self._get_normal_value(row["vpastStem"]),
+                        self._get_normal_value(row["vpresentStem"]),
                         self._get_category(row["category"]),
                         self._get_goup_or_mokassar(row["goupOrMokassar"]),
                         self._get_esme_zamir(row["esmeZamir"]),
@@ -83,9 +82,9 @@ class SenseService(object):
                         self._get_verb_tansivity(row["vtansivity"]),
                         self._get_verb_activity(row["vactivity"]),
                         self._get_verb_type(row["vtype"]),
-                        self.get_normal_value(row["synset"]),
-                        self.get_normal_value(row["vpastStem"]),
-                        self.get_normal_value(row["vpresentStem"]),
+                        self._get_normal_value(row["synset"]),
+                        self._get_normal_value(row["vpastStem"]),
+                        self._get_normal_value(row["vpresentStem"]),
                         self._get_category(row["category"]),
                         self._get_goup_or_mokassar(row["goupOrMokassar"]),
                         self._get_esme_zamir(row["esmeZamir"]),
@@ -129,9 +128,9 @@ class SenseService(object):
                     self._get_verb_tansivity(row["vtansivity"]),
                     self._get_verb_activity(row["vactivity"]),
                     self._get_verb_type(row["vtype"]),
-                    self.get_normal_value(row["synset"]),
-                    self.get_normal_value(row["vpastStem"]),
-                    self.get_normal_value(row["vpresentStem"]),
+                    self._get_normal_value(row["synset"]),
+                    self._get_normal_value(row["vpastStem"]),
+                    self._get_normal_value(row["vpresentStem"]),
                     self._get_category(row["category"]),
                     self._get_goup_or_mokassar(row["goupOrMokassar"]),
                     self._get_esme_zamir(row["esmeZamir"]),
@@ -170,9 +169,9 @@ class SenseService(object):
                         self._get_verb_tansivity(row["vtansivity"]),
                         self._get_verb_activity(row["vactivity"]),
                         self._get_verb_type(row["vtype"]),
-                        self.get_normal_value(row["synset"]),
-                        self.get_normal_value(row["vpastStem"]),
-                        self.get_normal_value(row["vpresentStem"]),
+                        self._get_normal_value(row["synset"]),
+                        self._get_normal_value(row["vpastStem"]),
+                        self._get_normal_value(row["vpresentStem"]),
                         self._get_category(row["category"]),
                         self._get_goup_or_mokassar(row["goupOrMokassar"]),
                         self._get_esme_zamir(row["esmeZamir"]),
@@ -227,7 +226,7 @@ class SenseService(object):
                     sense_id1 = res.sense_id1
                     sense_word2 = res.sense_word1
                     sense_word1 = res.sense_word2
-                    res.type = self.reverse_str_relation_type(type_)
+                    res.type = self._reverse_str_relation_type(type_)
                     res.sense_id1 = sense_id2
                     res.sense_id2 = sense_id1
                     res.sense_word1 = sense_word2
@@ -241,12 +240,12 @@ class SenseService(object):
             _revTypes = ""
             for type_ in types:
                 _types = (
-                    str(_types) + "'" + self.relation_value(type_) + "',"
+                    str(_types) + "'" + self._relation_value(type_) + "',"
                 )
                 _revTypes = (
                     str(_revTypes)
                     + "'"
-                    + self.relation_value(self.reverse_relation_type(type_))
+                    + self._relation_value(self._reverse_relation_type(type_))
                     + "',"
                 )
             _types = str(_types) + "'not_type'"
@@ -286,7 +285,7 @@ class SenseService(object):
                     sense_id1 = res.sense_id1
                     sense_word2 = res.sense_word1
                     sense_word1 = res.sense_word2
-                    res.type = self.reverse_str_relation_type(type_)
+                    res.type = self._reverse_str_relation_type(type_)
                     res.sense_id1 = sense_id2
                     res.sense_id2 = sense_id1
                     res.sense_word1 = sense_word2
@@ -349,7 +348,7 @@ class SenseService(object):
                                 replace("\u0626", "\u064a")
             return normal_value
 
-        def secure_value(self, value):
+        def _secure_value(self, value):
             if value == None:
                 return ""
             value = value.replace("\u0000", "").\
@@ -382,164 +381,72 @@ class SenseService(object):
         def _get_verb_tansivity(self, value):
             if value == None or value == "" or value == "Nothing":
                 return ""
-            string = value
-            if _java_string_hashcode(string) == -1724158427:
-                if string == "transitive":
-                    return "Transitive"
-                return value
-            elif _java_string_hashcode(string) == 841936170:
-                if string == "inTransitive":
-                    return "Intransitive"
-                return value
-            elif _java_string_hashcode(string) == 1845861045:
-                if not string == "dovajhi":
-                    return value
-                return "Causative/Anticausative"
-            return value
+            return {"dovajhi":"Causative/Anticausative",
+                    "inTransitive":"Intransitive",
+                    "transitive":"Transitive"}\
+                   .get(value,value)
 
         def _get_verb_activity(self, value):
             if value == None or value == "" or value == "Nothing":
                 return ""
-            string = value
-            if _java_string_hashcode(string) == -1422950650:
-                if string == "active":
-                    return "Active"
-                return value
-            elif _java_string_hashcode(string) == -792039641:
-                if string == "passive":
-                    return "Passive"
-                return value
-            return value
+            return {"active":"Active",
+                    "passive":"Passive"}\
+                   .get(value,value)
 
         def _get_verb_type(self, value):
             if value == None or value == "" or value == "Nothing":
                 return ""
-            string = value
-            if _java_string_hashcode(string) == -1431524879:
-                if string == "simpleVerb":
-                    return "Simple"
-                return value
-            elif _java_string_hashcode(string) == -1054772775:
-                if string == "pishvandiVerb":
-                    return "Phrasal"
-                return value
-            elif _java_string_hashcode(string) == -570810619:
-                if string == "auxiliaryVerb":
-                    return "Auxiliary"
-                return value
-            elif _java_string_hashcode(string) == 530219749:
-                if string == "copulaVerb":
-                    return "Copula"
-                return value
-            elif _java_string_hashcode(string) == 1665965418:
-                if string == "compoundVerb":
-                    return "Complex"
-                return value
-            return value
+            return {"auxiliaryVerb":"Auxiliary",
+                    "compoundVerb":"Complex",
+                    "copulaVerb":"Copula",
+                    "pishvandiVerb":"Phrasal",
+                    "simpleVerb":"Simple"}\
+                   .get(value,value)
 
         def _get_category(self, value):
             if value == None or value == "" or value == "Nothing":
                 return ""
-            string = value
-            if _java_string_hashcode(string) == -49458414:
-                if string == "category_masdari":
-                    return "Infinitival"
-                return value
-            elif _java_string_hashcode(string) == 318357937:
-                if string == "category_esmZamir":
-                    return "Pronoun"
-                return value
-            elif _java_string_hashcode(string) == 338298407:
-                if string == "category_adad":
-                    return "Numeral"
-                return value
-            elif _java_string_hashcode(string) == 338599184:
-                if string == "category_khAs":
-                    return "Specific"
-                return value
-            elif _java_string_hashcode(string) == 1537779501:
-                if string == "category_Am":
-                    return "General"
-                return value
-            return value
+            return {"category_adad":"Numeral",
+                    "category_Am":"General",
+                    "category_khAs":"Specific",
+                    "category_masdari":"Infinitival",
+                    "category_esmZamir":"Pronoun"}\
+                   .get(value,value)
 
         def _get_goup_or_mokassar(self, value):
             if value == None or value == "" or value == "Nothing":
                 return ""
-            string = value
-            if _java_string_hashcode(string) == -826418989:
-                if string == "am_khas_esmejam":
-                    return "MassNoun"
-                return value
-            elif _java_string_hashcode(string) == 134174425:
-                if string == "am_khas_jam":
-                    return "Regular"
-                return value
-            elif _java_string_hashcode(string) == 1892681254:
-                if string == "am_khas_mokassar":
-                    return "Irregular"
-                return value
-            return value
+            return {"am_khas_esmejam":"MassNoun",
+                    "am_khas_jam":"Regular",
+                    "am_khas_mokassar":"Irregular"}\
+                   .get(value,value)
 
         def _get_esme_zamir(self, value):
             if value == None or value == "" or value == "Nothing":
                 return ""
-            string = value
-            if _java_string_hashcode(string) == -969140441:
-                if string == "gheir_moshakhas":
-                    return "Indefinite"
-                return value
-            elif _java_string_hashcode(string) == 534797624:
-                if string == "motaghabel":
-                    return "Reciprocal"
-                return value
-            elif _java_string_hashcode(string) == 714990811:
-                if string == "noun_type_morakab":
-                    return ""
-                return value
-            elif _java_string_hashcode(string) == 1224364290:
-                if not string == "moakkad":
-                    return value
-                return "Emphatic"
-            return value
+            return {"moakkad":"Emphatic",
+                    "gheir_moshakhas":"Indefinite",
+                    "motaghabel":"Reciprocal",
+                    "noun_type_morakab":""}\
+                   .get(value,value)
 
         def _get_adad(self, value):
             if value == None or value == "" or value == "Nothing":
                 return ""
-            string = value
-            if _java_string_hashcode(string) == -1537886559:
-                if string == "tartibi":
-                    return "Ordinal"
-                return value
-            elif _java_string_hashcode(string) == 3003695:
-                if not string == "asli":
-                    return value
-                return "Cardinal"
-            return value
+            return {"asli":"Cardinal",
+                    "tartibi":"Ordinal"}\
+                   .get(value,value)
 
         def get_adverb_type1(self, value):
             if value == None or value == "" or value == "Nothing":
                 return ""
-            string = value
-            if _java_string_hashcode(string) == -1609563487:
-                if string == "moshtagh_morakab":
-                    return "DerivationalCompound"
-                return value
-            elif _java_string_hashcode(string) == -221942702:
-                if string == "morakkab":
-                    return "Compound"
-                return value
-            elif _java_string_hashcode(string) == -186590203:
-                if string == "moshtagh":
-                    return "Derivative"
-                return value
-            elif _java_string_hashcode(string) == 109191060:
-                if string == "saade":
-                    return "Simple"
-                return value
-            return value
-
-        def get_normal_value(self, value):
+            return {"morakkab":"Compound",
+                    "moshtagh":"Derivative",
+                    "moshtagh_morakab":"DerivationalCompound",
+                    "saade":"Simple"}\
+                   .get(value,value)
+            
+        def _get_normal_value(self, value):
             if value == None or value == "" or value == "Nothing":
                 return ""
             return value
@@ -550,113 +457,56 @@ class SenseService(object):
             res = " "
             if value[0] == "1":
                 res += "AdjectiveModifying,"
-            elif value[0] == "0":
-                res = str(res)
-            else:
+            elif value[0] != "0":
                 res += value[0] + ","
             if value[1] == "1":
                 res += "AdverbModifying,"
-            elif value[1] == "0":
-                res = str(res)
-            else:
+            elif value[1] != "0":
                 res += value[1] + ","
             if value[2] == "1":
                 res += "VerbModifying,"
-            elif value[2] == "0":
-                res = str(res)
-            else:
+            elif value[2] != "0":
                 res += value[2] + ","
             if value[3] == "1":
                 res += "SentenceModifying,"
-            elif value[3] == "0":
-                res = str(res)
-            else:
+            elif value[3] != "0":
                 res += value[3] + ","
             return res[:-1]
 
         def _get_adj_pishin_vijegi(self, value):
             if value == None or value == "" or value == "Nothing" or value == "No":
                 return ""
-            string = value
-            if _java_string_hashcode(string) == -282395544:
-                if string == "Yes_taajobi":
-                    return "Exclamatory"
-                return value
-            elif _java_string_hashcode(string) == 770492981:
-                if string == "Yes_Nothing":
-                    return "Simple"
-                return value
-            elif _java_string_hashcode(string) == 1795033874:
-                if string == "Yes_eshare":
-                    return "Demonstrative"
-                return value
-            elif _java_string_hashcode(string) == 2020200460:
-                if not string == "Yes_mobham":
-                    return value
-                return "Indefinite"
-            return value
+            return {"Yes_mobham":"Indefinite",
+                    "Yes_taajobi":"Exclamatory",
+                    "Yes_eshare":"Demonstrative",
+                    "Yes_Nothing":"Simple"}\
+                   .get(value,value)
 
         def _get_adj_type(self, value):
             if value == None or value == "" or value == "Nothing" or value == "No":
                 return ""
-            string = value
-            if _java_string_hashcode(string) == -1735880873:
-                if string == "bartarin":
-                    return "Superlative"
-                return value
-            elif _java_string_hashcode(string) == -1396218190:
-                if string == "bartar":
-                    return "Comparative"
-                return value
-            elif _java_string_hashcode(string) == 1241931560:
-                if string == "motlagh":
-                    return "Absolute"
-                return value
-            return value
+            return {"bartarin":"Superlative",
+                    "motlagh":"Absolute",
+                    "bartar":"Comparative"}\
+                   .get(value,value)
 
         def _get_noe_khas(self, value):
             if value == None or value == "" or value == "Nothing" or value == "No":
                 return ""
-            string = value
-            if _java_string_hashcode(string) == -533828350:
-                if string == "noe_khas_ensan":
-                    return "Human"
-                return value
-            elif _java_string_hashcode(string) == -526835153:
-                if string == "noe_khas_makan":
-                    return "Place"
-                return value
-            elif _java_string_hashcode(string) == -514827458:
-                if string == "noe_khas_zaman":
-                    return "Time"
-                return value
-            elif _java_string_hashcode(string) == 708964732:
-                if string == "noe_khas_heyvan":
-                    return "Animal"
-                return value
-            return value
+            return {"noe_khas_ensan":"Human",
+                    "noe_khas_heyvan":"Animal",
+                    "noe_khas_makan":"Place",
+                    "noe_khas_zaman":"Time"}\
+                   .get(value,value)
 
         def _get_adj_type_sademorakkab(self, value):
             if value == None or value == "" or value == "Nothing" or value == "No":
                 return ""
-            string = value
-            if _java_string_hashcode(string) == -1398986386:
-                if string == "adj_type_morakab":
-                    return "Compound"
-                return value
-            elif _java_string_hashcode(string) == -383542830:
-                if string == "adj_type_moshtagh":
-                    return "Derivative"
-                return value
-            elif _java_string_hashcode(string) == -264504089:
-                if string == "adj_type_saade":
-                    return "Simple"
-                return value
-            elif _java_string_hashcode(string) == 1930601326:
-                if string == "adj_type_moshtagh_morakab":
-                    return "DerivatinalCompound"
-                return value
-            return value
+            return {"adj_type_morakab":"Compound",
+                    "adj_type_moshtagh":"Derivative",
+                    "adj_type_moshtagh_morakab":"DerivatinalCompound",
+                    "adj_type_saade":"Simple"}\
+                   .get(value,value)
 
         def _get_verb_gozara_type(self, value):
             if value == None or value == "" or value == "Nothing":
@@ -679,35 +529,19 @@ class SenseService(object):
         def _get_noun_type(self, value):
             if value == None or value == "" or value == "Nothing" or value == "No":
                 return ""
-            string = value
-            if _java_string_hashcode(string) == -1881033151:
-                if string == "noun_type_ebarat":
-                    return "Phrasal"
-                return value
-            elif _java_string_hashcode(string) == -601968748:
-                if string == "noun_type_saade":
-                    return "Simple"
-                return value
-            elif _java_string_hashcode(string) == 714990811:
-                if string == "noun_type_morakab":
-                    return "Compound"
-                return value
-            elif _java_string_hashcode(string) == 725240837:
-                if string == "noun_type_moshtagh":
-                    return "Derivative"
-                return value
-            elif _java_string_hashcode(string) == 1576628897:
-                if string == "noun_type_moshtagh_morakab":
-                    return "DerivatinalCompound"
-                return value
-            return value
+            return {"noun_type_morakab":"Compound",
+                    "noun_type_moshtagh":"Derivative",
+                    "noun_type_moshtagh_morakab":"DerivatinalCompound",
+                    "noun_type_saade":"Simple",
+                    "noun_type_ebarat":"Phrasal"}\
+                   .get(value,value)
 
-        def relation_value(self, type_):
+        def _relation_value(self, type_):
             if type_ == "Derivationally_related_form":
                 return "Derivationally related form"
             return type_.replace("_", "-")
 
-        def reverse_relation_type(self, type_):
+        def _reverse_relation_type(self, type_):
             if type_ == farsnet.schema.SenseRelationType.Refer_to:
                 return farsnet.schema.SenseRelationType.Is_Referred_by
             if type_ == farsnet.schema.SenseRelationType.Is_Referred_by:
@@ -722,7 +556,7 @@ class SenseService(object):
                 return farsnet.schema.SenseRelationType.Is_Non_Verbal_Part_of
             return type_
 
-        def reverse_str_relation_type(self, type_):
+        def _reverse_str_relation_type(self, type_):
             if type_ == "Refer-to":
                 return "Is-Referred-by"
             if type_ == "Is-Referred-by":
@@ -738,11 +572,11 @@ class SenseService(object):
             return type_
 
     instance = None
-    def __new__(self, con):
-        if not self.instance:
-            self.instance = self.__SenseService(con)
+    def __new__(cls, con):
+        if not SenseService.instance:
+            SenseService.instance = SenseService._SenseService(con)
 
-        return self.instance
+        return SenseService.instance
 
     def __getattr__(self, name):
         return getattr(self.instance, name)

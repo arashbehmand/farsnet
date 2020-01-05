@@ -1,4 +1,5 @@
-class SenseRelationType():
+from enum import Enum
+class SenseRelationType(Enum):
     Antonym = u"Antonym"
     Refer_to = u"Refer_to"
     Is_Referred_by = u"Is_Referred_by"

@@ -70,6 +70,7 @@ class Sense(object):
     def sense_relations(self, relation_type = None):
         if relation_type is None:
             return farsnet.sense_service.get_sense_relations_by_id(self.id)
-        else:
-            return farsnet.sense_service.get_sense_relations_by_type(self.id, relation_type)
+        elif type(relation_type)!=list:
+            relation_type = [relation_type]
+        return farsnet.sense_service.get_sense_relations_by_type(self.id, relation_type)
         

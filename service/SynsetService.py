@@ -1,16 +1,14 @@
 import farsnet.schema
-from ._utils import _java_string_hashcode
-
 
 class SynsetService(object):
-    class __SynsetService(object):
+    class _SynsetService(object):
         def __init__(self, con):
             self.con = con
 
         def get_synsets_by_word(self, search_style, search_keyword):
             results = list()
             sql = "SELECT id, pos, semanticCategory, example, gloss, nofather, noMapping FROM synset WHERE synset.id IN (SELECT synset.id as synset_id FROM word INNER JOIN sense ON sense.word = word.id INNER JOIN synset ON sense.synset = synset.id LEFT OUTER JOIN value ON value.word = word.id WHERE word.search_value @SearchStyle '@SearchValue' OR (value.search_value) @SearchStyle '@SearchValue')  OR synset.id IN (SELECT sense.synset AS synset_id FROM sense INNER JOIN sense_relation ON sense.id = sense_relation.sense INNER JOIN sense AS sense_2 ON sense_2.id = sense_relation.sense2 INNER JOIN word ON sense_2.word = word.id WHERE sense_relation.type =  'Refer-to' AND word.search_value LIKE  '@SearchValue') OR synset.id IN (SELECT sense_2.synset AS synset_id FROM sense INNER JOIN sense_relation ON sense.id = sense_relation.sense INNER JOIN sense AS sense_2 ON sense_2.id = sense_relation.sense2 INNER JOIN word ON sense.word = word.id WHERE sense_relation.type =  'Refer-to' AND word.search_value LIKE  '@SearchValue')"
-            search_keyword = self.secure_value(self.normal_value(search_keyword))
+            search_keyword = self._secure_value(self.normal_value(search_keyword))
             if search_style == "LIKE" or search_style == "START" or search_style == "END":
                 sql = sql.replace("@SearchStyle", "LIKE")
                 if search_style == "LIKE":
@@ -27,7 +25,7 @@ class SynsetService(object):
             for row in cur:
                 results.append(
                     farsnet.schema.Synset(
-                        row[1], row[2], row[3], row[4], row[5], row[6], row[7],
+                        row[0], row[1], row[2], row[3], row[4], row[5], row[6],
                     )
                 )
             return results
@@ -40,7 +38,7 @@ class SynsetService(object):
             for row in cur:
                 results.append(
                     farsnet.schema.Synset(
-                        row[1], row[2], row[3], row[4], row[5], row[6], row[7],
+                        row[0], row[1], row[2], row[3], row[4], row[5], row[6],
                     )
                 )
             return results
@@ -52,7 +50,7 @@ class SynsetService(object):
             cur.execute(sql)
             for row in cur:
                 result = farsnet.schema.Synset(
-                    row[1], row[2], row[3], row[4], row[5], row[6], row[7],
+                    row[0], row[1], row[2], row[3], row[4], row[5], row[6],
                 )
             return result
 
@@ -69,7 +67,7 @@ class SynsetService(object):
             for row in cur:
                 results.append(
                     farsnet.schema.SynsetRelation(
-                        row[1], row[2], row[3], row[4], row[5], row[6], row[7],
+                        row[0], row[1], row[2], row[3], row[4], row[5], row[6],
                     )
                 )
 
@@ -96,11 +94,11 @@ class SynsetService(object):
             _types = ""
             _revTypes = ""
             for type_ in types:
-                _types = str(_types) + "'" + self.relation_value(type_) + "',"
+                _types = str(_types) + "'" + self._relation_value(type_) + "',"
                 _revTypes = (
                     str(_revTypes)
                     + "'"
-                    + self.relation_value(self.reverse_relation_type(type_))
+                    + self._relation_value(self._reverse_relation_type(type_))
                     + "',"
                 )
             _types = str(_types) + "'not_type'"
@@ -122,7 +120,7 @@ class SynsetService(object):
             for row in cur:
                 results.append(
                     farsnet.schema.SynsetRelation(
-                        row[1], row[2], row[3], row[4], row[5], row[6], row[7],
+                        row[0], row[1], row[2], row[3], row[4], row[5], row[6],
                     )
                 )
 
@@ -155,33 +153,43 @@ class SynsetService(object):
             for row in cur:
                 results.append(
                     farsnet.schema.WordNetSynset(
-                        row[1], row[2], row[3], row[4], row[5], row[6], row[7],
+                        row[0], row[1], row[2], row[3], row[4], row[5], row[6],
                     )
                 )
             return results
 
         def get_synset_examples(self, synset_id):
             results = list()
+            # sql = (
+            #     "SELECT gloss_and_example.id, content, lexicon.title FROM gloss_and_example INNER JOIN lexicon ON gloss_and_example.lexicon=lexicon.id WHERE type='EXAMPLE' and synset="
+            #     + str(synset_id)
+            # )
             sql = (
-                "SELECT gloss_and_example.id, content, lexicon.title FROM gloss_and_example INNER JOIN lexicon ON gloss_and_example.lexicon=lexicon.id WHERE type='EXAMPLE' and synset="
+                "SELECT id, content FROM gloss_and_example WHERE type='EXAMPLE' and synset="
                 + str(synset_id)
             )
             cur = self.con.cursor()
             cur.execute(sql)
             for row in cur:
-                results.append(farsnet.schema.SynsetExample(row[1], row[2], row[3]))
+                # results.append(farsnet.schema.SynsetExample(row[0], row[1], row[2]))
+                results.append(farsnet.schema.SynsetExample(row[0], row[1], None))
             return results
 
         def get_synset_glosses(self, synset_id):
             results = list()
+            # sql = (
+            #     "SELECT gloss_and_example.id, content, lexicon.title FROM gloss_and_example INNER JOIN lexicon ON gloss_and_example.lexicon=lexicon.id WHERE type='GLOSS' and synset="
+            #     + str(synset_id)
+            # )
             sql = (
-                "SELECT gloss_and_example.id, content, lexicon.title FROM gloss_and_example INNER JOIN lexicon ON gloss_and_example.lexicon=lexicon.id WHERE type='GLOSS' and synset="
+                "SELECT id, content FROM gloss_and_example WHERE type='GLOSS' and synset="
                 + str(synset_id)
             )
             cur = self.con.cursor()
             cur.execute(sql)
             for row in cur:
-                results.append(farsnet.schema.SynsetGloss(row[1], row[2], row[3]))
+                # results.append(farsnet.schema.SynsetGloss(row[0], row[1], row[2]))
+                results.append(farsnet.schema.SynsetGloss(row[0], row[1], None))
             return results
 
         def normal_value(self, value):
@@ -223,7 +231,7 @@ class SynsetService(object):
             )
             return normal_value
 
-        def secure_value(self, value):
+        def _secure_value(self, value):
             if value == None:
                 return ""
             value = (
@@ -255,7 +263,7 @@ class SynsetService(object):
             )
             return value
 
-        def relation_value(self, type_):
+        def _relation_value(self, type_):
             if (
                 type_ == "Related_to"
                 or type_ == "Has-Unit"
@@ -266,7 +274,7 @@ class SynsetService(object):
                 return "Has-Salient defining feature"
             return type_.replace("_", " ")
 
-        def reverse_relation_type(self, type_):
+        def _reverse_relation_type(self, type_):
             if type_ == farsnet.schema.SynsetRelationType.Agent:
                 return farsnet.schema.SynsetRelationType.Is_Agent_of
             if type_ == farsnet.schema.SynsetRelationType.Is_Agent_of:
@@ -335,9 +343,9 @@ class SynsetService(object):
 
     instance = None
 
-    def __new__(self, con):
+    def __new__(cls, con):
         if not SynsetService.instance:
-            SynsetService.instance = SynsetService.__SynsetService(con)
+            SynsetService.instance = SynsetService._SynsetService(con)
 
         return SynsetService.instance
 
