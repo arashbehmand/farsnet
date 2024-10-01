@@ -1,5 +1,7 @@
 import farsnet.schema
 import farsnet.database
+
+
 class SynsetService(object):
     def __init__(self):
         self.con = farsnet.database.SqlLiteDbUtility.get_connection()
@@ -24,7 +26,13 @@ class SynsetService(object):
         for row in cur:
             results.append(
                 farsnet.schema.Synset(
-                    row[0], row[1], row[2], row[3], row[4], row[5], row[6],
+                    row[0],
+                    row[1],
+                    row[2],
+                    row[3],
+                    row[4],
+                    row[5],
+                    row[6],
                 )
             )
         return results
@@ -37,19 +45,34 @@ class SynsetService(object):
         for row in cur:
             results.append(
                 farsnet.schema.Synset(
-                    row[0], row[1], row[2], row[3], row[4], row[5], row[6],
+                    row[0],
+                    row[1],
+                    row[2],
+                    row[3],
+                    row[4],
+                    row[5],
+                    row[6],
                 )
             )
         return results
 
     def get_synset_by_id(self, synset_id):
-        sql = "SELECT id, pos, semanticCategory, example, gloss, nofather, noMapping FROM synset WHERE id=" + str(synset_id);
+        sql = (
+            "SELECT id, pos, semanticCategory, example, gloss, nofather, noMapping FROM synset WHERE id="
+            + str(synset_id)
+        )
         result = None
         cur = self.con.cursor()
         cur.execute(sql)
         for row in cur:
             result = farsnet.schema.Synset(
-                row[0], row[1], row[2], row[3], row[4], row[5], row[6],
+                row[0],
+                row[1],
+                row[2],
+                row[3],
+                row[4],
+                row[5],
+                row[6],
             )
         return result
 
@@ -66,7 +89,13 @@ class SynsetService(object):
         for row in cur:
             results.append(
                 farsnet.schema.SynsetRelation(
-                    row[0], row[1], row[2], row[3], row[4], row[5], row[6],
+                    row[0],
+                    row[1],
+                    row[2],
+                    row[3],
+                    row[4],
+                    row[5],
+                    row[6],
                 )
             )
 
@@ -119,7 +148,13 @@ class SynsetService(object):
         for row in cur:
             results.append(
                 farsnet.schema.SynsetRelation(
-                    row[0], row[1], row[2], row[3], row[4], row[5], row[6],
+                    row[0],
+                    row[1],
+                    row[2],
+                    row[3],
+                    row[4],
+                    row[5],
+                    row[6],
                 )
             )
 
@@ -152,7 +187,13 @@ class SynsetService(object):
         for row in cur:
             results.append(
                 farsnet.schema.WordNetSynset(
-                    row[0], row[1], row[2], row[3], row[4], row[5], row[6],
+                    row[0],
+                    row[1],
+                    row[2],
+                    row[3],
+                    row[4],
+                    row[5],
+                    row[6],
                 )
             )
         return results
@@ -263,11 +304,7 @@ class SynsetService(object):
         return value
 
     def _relation_value(self, type_):
-        if (
-            type_ == "Related_to"
-            or type_ == "Has-Unit"
-            or type_[:3] == "Is_"
-        ):
+        if type_ == "Related_to" or type_ == "Has-Unit" or type_[:3] == "Is_":
             return type_.replace("_", "-")
         if type_ == "Has_Salient_defining_feature":
             return "Has-Salient defining feature"

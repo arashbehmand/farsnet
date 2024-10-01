@@ -1,4 +1,6 @@
 import farsnet
+
+
 class SenseRelation(object):
     def __init__(self, id, sense_id1, sense_id2, sense_word1, sense_word2, type_):
         self.id = id

@@ -1,6 +1,9 @@
 import farsnet
+
+
 class Synset(object):
-    def __init__(self, id, pos, semantic_category, example, gloss, nofather, no_mapping
+    def __init__(
+        self, id, pos, semantic_category, example, gloss, nofather, no_mapping
     ):
         self.id = id
         self.semantic_category = semantic_category
@@ -20,10 +23,11 @@ class Synset(object):
     def wordnet_synsets(self):
         return farsnet.synset_service.get_wordnet_synsets(self.id)
 
-    
-    def synset_relations(self, relation_type = None):
+    def synset_relations(self, relation_type=None):
         if relation_type is None:
             return farsnet.synset_service.get_synset_relations_by_id(self.id)
-        elif type(relation_type)!=list:
+        elif type(relation_type) != list:
             relation_type = [relation_type]
-        return farsnet.synset_service.get_synset_relations_by_type(self.id, relation_type)
+        return farsnet.synset_service.get_synset_relations_by_type(
+            self.id, relation_type
+        )

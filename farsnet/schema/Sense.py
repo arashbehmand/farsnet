@@ -1,9 +1,11 @@
 import farsnet
 import farsnet.schema
 
+
 class Sense(object):
 
-    def __init__(self,
+    def __init__(
+        self,
         id,
         seq_id,
         pos,
@@ -61,16 +63,14 @@ class Sense(object):
         self.value = default_value
         self.word = farsnet.schema.Word(word_id, pos, default_phonetic, default_value)
 
-    
     def get_synset(self):
         if self.synset != None and not self.synset == "":
             return farsnet.synset_service.get_synset_by_id(int(self.synset))
         return None
 
-    def sense_relations(self, relation_type = None):
+    def sense_relations(self, relation_type=None):
         if relation_type is None:
             return farsnet.sense_service.get_sense_relations_by_id(self.id)
-        elif type(relation_type)!=list:
+        elif type(relation_type) != list:
             relation_type = [relation_type]
         return farsnet.sense_service.get_sense_relations_by_type(self.id, relation_type)
-        
