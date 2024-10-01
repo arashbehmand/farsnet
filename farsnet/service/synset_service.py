@@ -98,7 +98,7 @@ class SynsetService:
         cur.execute(sql)
         for row in cur:
             results.append(
-                farsnet.schema.SynsetRelation(
+                farsnet.schema.synset_relation(
                     row[0],
                     row[1],
                     row[2],
@@ -157,7 +157,7 @@ class SynsetService:
         cur.execute(sql)
         for row in cur:
             results.append(
-                farsnet.schema.SynsetRelation(
+                farsnet.schema.synset_relation(
                     row[0],
                     row[1],
                     row[2],
@@ -196,7 +196,7 @@ class SynsetService:
         cur.execute(sql)
         for row in cur:
             results.append(
-                farsnet.schema.WordNetSynset(
+                farsnet.schema.wordnet_synset(
                     row[0],
                     row[1],
                     row[2],
@@ -222,7 +222,7 @@ class SynsetService:
         cur.execute(sql)
         for row in cur:
             # results.append(farsnet.schema.SynsetExample(row[0], row[1], row[2]))
-            results.append(farsnet.schema.SynsetExample(row[0], row[1], None))
+            results.append(farsnet.schema.synset_example(row[0], row[1], None))
         return results
 
     def get_synset_glosses(self, synset_id):
@@ -239,7 +239,7 @@ class SynsetService:
         cur.execute(sql)
         for row in cur:
             # results.append(farsnet.schema.SynsetGloss(row[0], row[1], row[2]))
-            results.append(farsnet.schema.SynsetGloss(row[0], row[1], None))
+            results.append(farsnet.schema.synset_gloss(row[0], row[1], None))
         return results
 
     def normal_value(self, value):
@@ -321,68 +321,68 @@ class SynsetService:
         return type_.replace("_", " ")
 
     def _reverse_relation_type(self, type_):
-        if type_ == farsnet.schema.SynsetRelationType.Agent:
-            return farsnet.schema.SynsetRelationType.Is_Agent_of
-        if type_ == farsnet.schema.SynsetRelationType.Is_Agent_of:
-            return farsnet.schema.SynsetRelationType.Agent
-        if type_ == farsnet.schema.SynsetRelationType.Hypernym:
-            return farsnet.schema.SynsetRelationType.Hyponym
-        if type_ == farsnet.schema.SynsetRelationType.Hyponym:
-            return farsnet.schema.SynsetRelationType.Hypernym
-        if type_ == farsnet.schema.SynsetRelationType.Instance_hyponym:
-            return farsnet.schema.SynsetRelationType.Instance_hypernym
-        if type_ == farsnet.schema.SynsetRelationType.Instance_hypernym:
-            return farsnet.schema.SynsetRelationType.Instance_hyponym
-        if type_ == farsnet.schema.SynsetRelationType.Part_holonym:
-            return farsnet.schema.SynsetRelationType.Part_meronym
-        if type_ == farsnet.schema.SynsetRelationType.Part_meronym:
-            return farsnet.schema.SynsetRelationType.Part_holonym
-        if type_ == farsnet.schema.SynsetRelationType.Member_holonym:
-            return farsnet.schema.SynsetRelationType.Member_meronym
-        if type_ == farsnet.schema.SynsetRelationType.Member_meronym:
-            return farsnet.schema.SynsetRelationType.Member_holonym
-        if type_ == farsnet.schema.SynsetRelationType.Substance_holonym:
-            return farsnet.schema.SynsetRelationType.Substance_meronym
-        if type_ == farsnet.schema.SynsetRelationType.Substance_meronym:
-            return farsnet.schema.SynsetRelationType.Substance_holonym
-        if type_ == farsnet.schema.SynsetRelationType.Portion_holonym:
-            return farsnet.schema.SynsetRelationType.Portion_meronym
-        if type_ == farsnet.schema.SynsetRelationType.Portion_meronym:
-            return farsnet.schema.SynsetRelationType.Portion_holonym
-        if type_ == farsnet.schema.SynsetRelationType.Domain:
-            return farsnet.schema.SynsetRelationType.Is_Domain_of
-        if type_ == farsnet.schema.SynsetRelationType.Is_Domain_of:
-            return farsnet.schema.SynsetRelationType.Domain
-        if type_ == farsnet.schema.SynsetRelationType.Cause:
-            return farsnet.schema.SynsetRelationType.Is_Caused_by
-        if type_ == farsnet.schema.SynsetRelationType.Is_Caused_by:
-            return farsnet.schema.SynsetRelationType.Cause
-        if type_ == farsnet.schema.SynsetRelationType.Is_Instrument_of:
-            return farsnet.schema.SynsetRelationType.Instrument
-        if type_ == farsnet.schema.SynsetRelationType.Instrument:
-            return farsnet.schema.SynsetRelationType.Is_Instrument_of
-        if type_ == farsnet.schema.SynsetRelationType.Is_Entailed_by:
-            return farsnet.schema.SynsetRelationType.Entailment
-        if type_ == farsnet.schema.SynsetRelationType.Entailment:
-            return farsnet.schema.SynsetRelationType.Is_Entailed_by
-        if type_ == farsnet.schema.SynsetRelationType.Location:
-            return farsnet.schema.SynsetRelationType.Is_Location_of
-        if type_ == farsnet.schema.SynsetRelationType.Is_Location_of:
-            return farsnet.schema.SynsetRelationType.Location
-        if type_ == farsnet.schema.SynsetRelationType.Has_Salient_defining_feature:
-            return farsnet.schema.SynsetRelationType.Salient_defining_feature
-        if type_ == farsnet.schema.SynsetRelationType.Salient_defining_feature:
-            return farsnet.schema.SynsetRelationType.Has_Salient_defining_feature
-        if type_ == farsnet.schema.SynsetRelationType.Is_Attribute_of:
-            return farsnet.schema.SynsetRelationType.Attribute
-        if type_ == farsnet.schema.SynsetRelationType.Attribute:
-            return farsnet.schema.SynsetRelationType.Is_Attribute_of
-        if type_ == farsnet.schema.SynsetRelationType.Unit:
-            return farsnet.schema.SynsetRelationType.Has_Unit
-        if type_ == farsnet.schema.SynsetRelationType.Has_Unit:
-            return farsnet.schema.SynsetRelationType.Unit
-        if type_ == farsnet.schema.SynsetRelationType.Is_Patient_of:
-            return farsnet.schema.SynsetRelationType.Patient
-        if type_ == farsnet.schema.SynsetRelationType.Patient:
-            return farsnet.schema.SynsetRelationType.Is_Patient_of
+        if type_ == farsnet.schema.synset_relation_type.Agent:
+            return farsnet.schema.synset_relation_type.Is_Agent_of
+        if type_ == farsnet.schema.synset_relation_type.Is_Agent_of:
+            return farsnet.schema.synset_relation_type.Agent
+        if type_ == farsnet.schema.synset_relation_type.Hypernym:
+            return farsnet.schema.synset_relation_type.Hyponym
+        if type_ == farsnet.schema.synset_relation_type.Hyponym:
+            return farsnet.schema.synset_relation_type.Hypernym
+        if type_ == farsnet.schema.synset_relation_type.Instance_hyponym:
+            return farsnet.schema.synset_relation_type.Instance_hypernym
+        if type_ == farsnet.schema.synset_relation_type.Instance_hypernym:
+            return farsnet.schema.synset_relation_type.Instance_hyponym
+        if type_ == farsnet.schema.synset_relation_type.Part_holonym:
+            return farsnet.schema.synset_relation_type.Part_meronym
+        if type_ == farsnet.schema.synset_relation_type.Part_meronym:
+            return farsnet.schema.synset_relation_type.Part_holonym
+        if type_ == farsnet.schema.synset_relation_type.Member_holonym:
+            return farsnet.schema.synset_relation_type.Member_meronym
+        if type_ == farsnet.schema.synset_relation_type.Member_meronym:
+            return farsnet.schema.synset_relation_type.Member_holonym
+        if type_ == farsnet.schema.synset_relation_type.Substance_holonym:
+            return farsnet.schema.synset_relation_type.Substance_meronym
+        if type_ == farsnet.schema.synset_relation_type.Substance_meronym:
+            return farsnet.schema.synset_relation_type.Substance_holonym
+        if type_ == farsnet.schema.synset_relation_type.Portion_holonym:
+            return farsnet.schema.synset_relation_type.Portion_meronym
+        if type_ == farsnet.schema.synset_relation_type.Portion_meronym:
+            return farsnet.schema.synset_relation_type.Portion_holonym
+        if type_ == farsnet.schema.synset_relation_type.Domain:
+            return farsnet.schema.synset_relation_type.Is_Domain_of
+        if type_ == farsnet.schema.synset_relation_type.Is_Domain_of:
+            return farsnet.schema.synset_relation_type.Domain
+        if type_ == farsnet.schema.synset_relation_type.Cause:
+            return farsnet.schema.synset_relation_type.Is_Caused_by
+        if type_ == farsnet.schema.synset_relation_type.Is_Caused_by:
+            return farsnet.schema.synset_relation_type.Cause
+        if type_ == farsnet.schema.synset_relation_type.Is_Instrument_of:
+            return farsnet.schema.synset_relation_type.Instrument
+        if type_ == farsnet.schema.synset_relation_type.Instrument:
+            return farsnet.schema.synset_relation_type.Is_Instrument_of
+        if type_ == farsnet.schema.synset_relation_type.Is_Entailed_by:
+            return farsnet.schema.synset_relation_type.Entailment
+        if type_ == farsnet.schema.synset_relation_type.Entailment:
+            return farsnet.schema.synset_relation_type.Is_Entailed_by
+        if type_ == farsnet.schema.synset_relation_type.Location:
+            return farsnet.schema.synset_relation_type.Is_Location_of
+        if type_ == farsnet.schema.synset_relation_type.Is_Location_of:
+            return farsnet.schema.synset_relation_type.Location
+        if type_ == farsnet.schema.synset_relation_type.Has_Salient_defining_feature:
+            return farsnet.schema.synset_relation_type.Salient_defining_feature
+        if type_ == farsnet.schema.synset_relation_type.Salient_defining_feature:
+            return farsnet.schema.synset_relation_type.Has_Salient_defining_feature
+        if type_ == farsnet.schema.synset_relation_type.Is_Attribute_of:
+            return farsnet.schema.synset_relation_type.Attribute
+        if type_ == farsnet.schema.synset_relation_type.Attribute:
+            return farsnet.schema.synset_relation_type.Is_Attribute_of
+        if type_ == farsnet.schema.synset_relation_type.Unit:
+            return farsnet.schema.synset_relation_type.Has_Unit
+        if type_ == farsnet.schema.synset_relation_type.Has_Unit:
+            return farsnet.schema.synset_relation_type.Unit
+        if type_ == farsnet.schema.synset_relation_type.Is_Patient_of:
+            return farsnet.schema.synset_relation_type.Patient
+        if type_ == farsnet.schema.synset_relation_type.Patient:
+            return farsnet.schema.synset_relation_type.Is_Patient_of
         return type_
