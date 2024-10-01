@@ -1,4 +1,4 @@
-class SynsetGloss(object):
+class SynsetGloss:
 
     def __init__(self, id, content, lexicon):
         self.id = id

@@ -1,7 +1,4 @@
-from .service.SenseService import SenseService
-from .service.SynsetService import SynsetService
+from .service import sense_service, synset_service
 
 __all__ = ["sense_service", "synset_service"]
 
-sense_service = SenseService()
-synset_service = SynsetService()

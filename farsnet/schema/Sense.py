@@ -1,8 +1,9 @@
-import farsnet
-import farsnet.schema
+from .Word import Word
 
-
-class Sense(object):
+class Sense:
+    """
+    Represents a sense of a word.
+    """
 
     def __init__(
         self,
@@ -61,16 +62,35 @@ class Sense(object):
         self.id = id
         self.seq_id = seq_id
         self.value = default_value
-        self.word = farsnet.schema.Word(word_id, pos, default_phonetic, default_value)
+        self.word = Word(word_id, pos, default_phonetic, default_value)
+
 
     def get_synset(self):
-        if self.synset != None and not self.synset == "":
-            return farsnet.synset_service.get_synset_by_id(int(self.synset))
+        """
+        Retrieves the synset associated with this sense.
+
+        Returns:
+            Synset: The associated Synset object, or None if not found.
+        """
+        if self.synset:
+            from farsnet.service import synset_service
+            return synset_service.get_synset_by_id(int(self.synset))
         return None
 
     def sense_relations(self, relation_type=None):
+        """
+        Retrieves the sense relations associated with this sense.
+
+        Args:
+            relation_type (SenseRelationType or list, optional): The type(s) of
+                relations to retrieve. If None, retrieves all relations.
+
+        Returns:
+            list: A list of SenseRelation objects.
+        """
+        from farsnet.service import sense_service
         if relation_type is None:
-            return farsnet.sense_service.get_sense_relations_by_id(self.id)
-        elif type(relation_type) != list:
+            return sense_service.get_sense_relations_by_id(self.id)
+        if not isinstance(relation_type, list):
             relation_type = [relation_type]
-        return farsnet.sense_service.get_sense_relations_by_type(self.id, relation_type)
+        return sense_service.get_sense_relations_by_type(self.id, relation_type)

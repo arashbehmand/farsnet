@@ -1,4 +1,4 @@
-class WordNetSynset(object):
+class WordNetSynset:
 
     def __init__(self, id, wn_pos, wn_offset, example, gloss, synset, type_):
         self.id = id

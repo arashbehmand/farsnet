@@ -1,3 +1,4 @@
+# expose types defined in the schema module
 from .PhoneticForm import PhoneticForm
 from .Sense import Sense
 from .SenseRelation import SenseRelation

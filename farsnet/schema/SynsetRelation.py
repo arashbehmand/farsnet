@@ -1,8 +1,4 @@
-import farsnet.schema
-import farsnet
-
-
-class SynsetRelation(object):
+class SynsetRelation:
 
     def __init__(
         self,
@@ -23,7 +19,9 @@ class SynsetRelation(object):
         self.reverse_type = reverse_type
 
     def synset1(self):
-        return farsnet.synset_service.get_synset_by_id(self.synset_id1)
+        from farsnet.service import synset_service
+        return synset_service.get_synset_by_id(self.synset_id1)
 
     def synset2(self):
-        return farsnet.synset_service.get_synset_by_id(self.synset_id2)
+        from farsnet.service import synset_service
+        return synset_service.get_synset_by_id(self.synset_id2)

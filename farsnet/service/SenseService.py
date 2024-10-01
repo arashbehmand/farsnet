@@ -1,12 +1,22 @@
 import farsnet.schema
-import farsnet.database
+from farsnet.database import SqlLiteDbUtility
 
 
-class SenseService(object):
+class SenseService:
     def __init__(self):
-        self.con = farsnet.database.SqlLiteDbUtility.get_connection()
+        self.con = SqlLiteDbUtility.get_connection()
 
     def get_senses_by_word(self, search_style, search_keyword):
+        """
+        Retrieves senses matching a given keyword and search style.
+
+        Args:
+            search_style (str): The search style ("LIKE", "START", "END", "EXACT").
+            search_keyword (str): The keyword to search for.
+
+        Returns:
+            list: A list of Sense objects that match the search criteria.
+        """
         results = list()
         sql = "SELECT sense.id, seqId, vtansivity, vactivity, vtype, synset, vpastStem, vpresentStem, category, goupOrMokassar, esmeZamir, adad, adverb_type_1, adverb_type_2, adj_pishin_vijegi, adj_type, noe_khas, nounType, adj_type_sademorakkab, vIssababi, vIsIdiom, vGozaraType, kootah_nevesht, mohavere, word.id as wordId, word.defaultValue, word.avaInfo, word.pos FROM sense INNER JOIN word ON sense.word = word.id WHERE sense.id IN (SELECT sense.id FROM word INNER JOIN sense ON sense.word = word.id LEFT OUTER JOIN value ON value.word = word.id WHERE word.search_value @SearchStyle '@SearchValue' OR value.search_value @SearchStyle '@SearchValue') OR sense.id IN (SELECT sense.id FROM sense INNER JOIN sense_relation ON sense.id = sense_relation.sense INNER JOIN sense AS sense_2 ON sense_2.id = sense_relation.sense2 INNER JOIN word ON sense_2.word = word.id WHERE sense_relation.type =  'Refer-to' AND word.search_value LIKE  '@SearchValue') OR sense.id IN (SELECT sense_2.id FROM sense INNER JOIN sense_relation ON sense.id = sense_relation.sense INNER JOIN sense AS sense_2 ON sense_2.id = sense_relation.sense2 INNER JOIN word ON sense.word = word.id WHERE sense_relation.type =  'Refer-to' AND word.search_value LIKE  '@SearchValue') "
         search_keyword = self._secure_value(self.normal_value(search_keyword))

@@ -1,4 +1,4 @@
-class SynsetExample(object):
+class SynsetExample:
 
     def __init__(self, id, content, lexicon):
         self.id = id

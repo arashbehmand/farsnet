@@ -1,12 +1,22 @@
 import farsnet.schema
-import farsnet.database
+from farsnet.database import SqlLiteDbUtility
 
 
-class SynsetService(object):
+class SynsetService:
     def __init__(self):
-        self.con = farsnet.database.SqlLiteDbUtility.get_connection()
+        self.con = SqlLiteDbUtility.get_connection()
 
     def get_synsets_by_word(self, search_style, search_keyword):
+        """
+        Retrieves synsets matching a given keyword and search style.
+
+        Args:
+            search_style (str): The search style ("LIKE", "START", "END", "EXACT").
+            search_keyword (str): The keyword to search for.
+
+        Returns:
+            list: A list of Synset objects that match the search criteria.
+        """
         results = list()
         sql = "SELECT id, pos, semanticCategory, example, gloss, nofather, noMapping FROM synset WHERE synset.id IN (SELECT synset.id as synset_id FROM word INNER JOIN sense ON sense.word = word.id INNER JOIN synset ON sense.synset = synset.id LEFT OUTER JOIN value ON value.word = word.id WHERE word.search_value @SearchStyle '@SearchValue' OR (value.search_value) @SearchStyle '@SearchValue')  OR synset.id IN (SELECT sense.synset AS synset_id FROM sense INNER JOIN sense_relation ON sense.id = sense_relation.sense INNER JOIN sense AS sense_2 ON sense_2.id = sense_relation.sense2 INNER JOIN word ON sense_2.word = word.id WHERE sense_relation.type =  'Refer-to' AND word.search_value LIKE  '@SearchValue') OR synset.id IN (SELECT sense_2.synset AS synset_id FROM sense INNER JOIN sense_relation ON sense.id = sense_relation.sense INNER JOIN sense AS sense_2 ON sense_2.id = sense_relation.sense2 INNER JOIN word ON sense.word = word.id WHERE sense_relation.type =  'Refer-to' AND word.search_value LIKE  '@SearchValue')"
         search_keyword = self._secure_value(self.normal_value(search_keyword))
