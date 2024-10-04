@@ -1,4 +1,4 @@
-from .Word import Word
+from .word import Word
 
 class Sense:
     """
